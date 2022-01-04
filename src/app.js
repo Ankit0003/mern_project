@@ -49,6 +49,8 @@ app.post('/register',async(req,res)=>{
         //console.log(req.body);
     const newRegister = new registerUser(req.body);
     //console.log(newRegister);
+
+    const token = await newRegister.generateAuthToken();
     await newRegister.save();
 
     res.status(201).render('index');

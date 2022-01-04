@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const registerSchema = mongoose.Schema({
     email:{
@@ -23,6 +24,15 @@ const registerSchema = mongoose.Schema({
         required: true 
     }
 })
+
+registerSchema.methods.generateAuthToken = async function(){
+    try {
+        const token = jwt.sign({_id:this._id},"mynameisankitkumarandiampracingmernstack");
+        console.log(token);
+    } catch (error) {
+        res.send("Cannot able to create token");
+    }
+}
 
 registerSchema.pre("save",async function(next){
     if(this.isModified("psw"))
