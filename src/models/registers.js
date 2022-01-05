@@ -22,13 +22,22 @@ const registerSchema = mongoose.Schema({
     psw_repeat:{
         type: String,
         required: true 
-    }
+    },
+    tokens:[
+        {
+            token:{
+                type:String,
+                required:true
+            }
+        }
+    ]
 })
 
 registerSchema.methods.generateAuthToken = async function(){
     try {
         const token = jwt.sign({_id:this._id},"mynameisankitkumarandiampracingmernstack");
-        console.log(token);
+        this.tokens = this.tokens.concat({token:token});
+      //  await this.save();
         return token;
     } catch (error) {
         res.send("Cannot able to create token");

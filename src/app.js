@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const path = require('path');
 const hbs = require('hbs');
 const bcrypt = require('bcrypt');
+const cookieParser = require('cookie-parser');
+const auth = require('./middleware/auth');
 
 require("./db/conn");
 const registerUser = require('./models/registers');
@@ -16,6 +18,7 @@ const templatepath = path.join(__dirname, "../templates/views");
 const partialpath = path.join(__dirname,"../templates/partials");
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({extended:false}));
 
 app.use(express.static(staticPath));
@@ -28,6 +31,10 @@ app.get("/",(req,res)=>{
 })
 app.get("/register",(req,res)=>{
     res.render("register");
+})
+app.get("/secret",auth,(req,res)=>{
+    //console.log(req.cookies.jwt);
+    res.render("index");
 })
 app.get("/login",(req,res)=>{
     res.render('login');
@@ -55,11 +62,11 @@ app.post('/register',async(req,res)=>{
     
     console.log(token);
     res.cookie("jwt",token,{
-        expires:new Date(Date.now() + 3000),
+        expires:new Date(Date.now() + 300000),
         httpOnly:true
     });
-    await newRegister.save();
-
+    const registered = await newRegister.save();
+ //   console.log(registered);
     res.status(201).render('index');
     }
     catch(error){
@@ -76,6 +83,15 @@ app.post('/login',async(req,res)=>{
         const userDetails = await registerUser.findOne({email:email});
       //  console.log(userDetails.psw,password);
       const isMatch = bcrypt.compare(password,userDetails.psw);
+     
+      const token = await userDetails.generateAuthToken();
+    
+       // console.log(token);
+
+        res.cookie("jwt",token,{
+            expires:new Date(Date.now() + 300000),
+            httpOnly:true
+        });
         if(isMatch){
             res.status(200).send("Login successful");
         }
