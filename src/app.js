@@ -52,6 +52,12 @@ app.post('/register',async(req,res)=>{
     //console.log(newRegister);
 
     const token = await newRegister.generateAuthToken();
+    
+    console.log(token);
+    res.cookie("jwt",token,{
+        expires:new Date(Date.now() + 3000),
+        httpOnly:true
+    });
     await newRegister.save();
 
     res.status(201).render('index');

@@ -29,6 +29,7 @@ registerSchema.methods.generateAuthToken = async function(){
     try {
         const token = jwt.sign({_id:this._id},"mynameisankitkumarandiampracingmernstack");
         console.log(token);
+        return token;
     } catch (error) {
         res.send("Cannot able to create token");
     }
