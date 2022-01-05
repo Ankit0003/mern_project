@@ -10,6 +10,9 @@ const auth =  async (req,res,next) =>{
 
         const user = await Register.findOne({_id:verify._id});
         console.log(user);
+
+        req.token = token;
+        req.user = user;
         next();
     } catch (error) {
         res.status(401).send("Error occur");

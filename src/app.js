@@ -36,6 +36,15 @@ app.get("/secret",auth,(req,res)=>{
     //console.log(req.cookies.jwt);
     res.render("index");
 })
+app.get("/logout",auth,(req,res)=>{
+    try {
+
+        res.send("Logout successfully");
+        
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
 app.get("/login",(req,res)=>{
     res.render('login');
 })
